@@ -1,5 +1,6 @@
 package br.com.alexandrenavarro.popularmovies.app;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Parcelable;
@@ -7,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -20,15 +23,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import br.com.alexandrenavarro.popularmovies.app.util.NetworkUtil;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String EXTRA_MOVIES = "EXTRA_MOVIES";
+    public static final String EXTRA_MOVIES = "EXTRA_MOVIES";
+    public static final String EXTRA_MOVIE = "EXTRA_MOVIE";
 
     private GridView mGridView;
     private PopMovieAdapter adapter;
@@ -46,6 +53,17 @@ public class MainActivity extends AppCompatActivity {
         super.onPostCreate(savedInstanceState);
         adapter = new PopMovieAdapter(getApplicationContext(), movies);
         mGridView.setAdapter(adapter);
+
+
+
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(getApplicationContext(), MovieDetailActivity.class);
+                intent.putExtra(MainActivity.EXTRA_MOVIE, adapter.getItem(i));
+                startActivity(intent);
+            }
+        });
 
         if(savedInstanceState == null){
             if(!NetworkUtil.isOnline(getApplicationContext())){
@@ -171,6 +189,9 @@ public class MainActivity extends AppCompatActivity {
             final String RESULTS = "results";
             final String POSTER_PATH = "poster_path";
             final String OVERVIEW = "overview";
+            final String RATE = "vote_average";
+            final String RELEASE_DATE = "release_date";
+            final String TITLE = "original_title";
 
             JSONObject moviesJson = new JSONObject(movieDbJsonStr);
             JSONArray moviesArray = moviesJson.getJSONArray(RESULTS);
@@ -179,7 +200,23 @@ public class MainActivity extends AppCompatActivity {
 
             for(int i = 0; i < moviesArray.length(); i++) {
                 JSONObject movieObject = moviesArray.getJSONObject(i);
-                Movie movie = new Movie(movieObject.getString(POSTER_PATH), movieObject.getString(OVERVIEW));
+                Movie movie = new Movie();
+                movie.setPosterPath(movieObject.getString(POSTER_PATH));
+                movie.setSynopsis(movieObject.getString(OVERVIEW));
+                movie.setRating(movieObject.getDouble(RATE));
+                movie.setTitle(movieObject.getString(TITLE));
+                String releaseDate = movieObject.getString(RELEASE_DATE);
+                if(releaseDate != null){
+                    Calendar cal = Calendar.getInstance();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-dd-MM");
+                    try {
+                        cal.setTime(sdf.parse(releaseDate));
+                        movie.setReleaseDate(cal);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 movies[i] = movie;
             }
 
