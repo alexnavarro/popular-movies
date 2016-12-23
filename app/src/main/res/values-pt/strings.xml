@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Pop Movies</string>
+    <string name="title_activity_settings">Configurações</string>
+    <string name="action_settings">Configurações</string>
+    <string name="pref_movies_label">Ordenação</string>
+    <string name="pref_top_rated_movies_label">Filmes mais bem avaliados</string>
+    <string name="pref_popular_movies_label">Filmes populares</string>
+</resources>

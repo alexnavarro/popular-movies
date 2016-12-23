@@ -1,13 +1,15 @@
 package br.com.alexandrenavarro.popularmovies.app;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +20,8 @@ import java.util.Calendar;
 
 import br.com.alexandrenavarro.popularmovies.app.util.MovieDBImageURLBuilder;
 import br.com.alexandrenavarro.popularmovies.app.util.PxConverter;
+
+import static br.com.alexandrenavarro.popularmovies.app.MainActivity.REQUEST_CODE_SETTINGS_UPDATE;
 
 /**
  * Created by alexandrenavarro on 18/12/16.
@@ -42,12 +46,31 @@ public class MovieDetailActivity extends AppCompatActivity {
         mTxtSynopsis = (TextView) findViewById(R.id.txt_synopsis);
         mTxtTitle = (TextView) findViewById(R.id.txt_title);
 
-        if(savedInstanceState == null){
-             mMovie = getIntent().getParcelableExtra(MainActivity.EXTRA_MOVIE);
-            if(mMovie != null){
-                bind();
-            }
+        mMovie = getIntent().getParcelableExtra(MainActivity.EXTRA_MOVIE);
+        if(mMovie != null){
+            bind();
         }
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.detail, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_settings:
+                startActivityForResult(new Intent(getApplicationContext(), SettingsActivity.class), REQUEST_CODE_SETTINGS_UPDATE);
+                return true;
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public void bind(){
