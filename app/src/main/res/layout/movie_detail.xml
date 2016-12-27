@@ -18,7 +18,7 @@
             android:paddingTop="48dp"
             android:textSize="30sp"
             android:textStyle="bold"
-            tools:background="@android:color/holo_orange_dark"
+            tools:background="@android:color/holo_orange_light"
             tools:text="Movie Title" />
 
 
