@@ -86,7 +86,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                 .centerCrop().resize((int)PxConverter.convertDpToPixel(120f, getApplicationContext()),
                 (int)PxConverter.convertDpToPixel(170f, getApplicationContext()))
                 .into(target);
-        
+
         mTxtTitle.setText(mMovie.getTitle());
         mTxtRate.setText(Double.toString(mMovie.getRating()));
         mTxtSynopsis.setText(mMovie.getSynopsis());
