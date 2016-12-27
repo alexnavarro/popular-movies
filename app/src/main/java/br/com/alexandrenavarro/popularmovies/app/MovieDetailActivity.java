@@ -116,4 +116,13 @@ public class MovieDetailActivity extends AppCompatActivity {
         if(mMovie.getReleaseDate() != null)
             mTxtReleaseYear.setText(Integer.toString(mMovie.getReleaseDate().get(Calendar.YEAR)));
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_CODE_SETTINGS_UPDATE && resultCode == RESULT_OK){
+            setResult(RESULT_OK);
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }
