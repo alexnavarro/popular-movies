@@ -20,6 +20,8 @@ import java.util.Calendar;
 
 import br.com.alexandrenavarro.popularmovies.app.util.MovieDBImageURLBuilder;
 import br.com.alexandrenavarro.popularmovies.app.util.PxConverter;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static br.com.alexandrenavarro.popularmovies.app.MainActivity.REQUEST_CODE_SETTINGS_UPDATE;
 
@@ -29,22 +31,18 @@ import static br.com.alexandrenavarro.popularmovies.app.MainActivity.REQUEST_COD
 
 public class MovieDetailActivity extends AppCompatActivity {
 
-    private TextView mTxtTitle;
-    private TextView mTxtSynopsis;
-    private TextView mTxtReleaseYear;
-    private TextView mTxtRate;
-        private ImageView mImvMovie;
+    @BindView(R.id.txt_title) TextView mTxtTitle;
+    @BindView(R.id.txt_synopsis) TextView mTxtSynopsis;
+    @BindView(R.id.txt_year) TextView mTxtReleaseYear;
+    @BindView(R.id.txt_rate) TextView mTxtRate;
+    @BindView(R.id.imv_movie) ImageView mImvMovie;
     private Movie mMovie;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.movie_detail);
-        mImvMovie = (ImageView) findViewById(R.id.imv_movie);
-        mTxtRate = (TextView) findViewById(R.id.txt_rate);
-        mTxtReleaseYear = (TextView) findViewById(R.id.txt_year);
-        mTxtSynopsis = (TextView) findViewById(R.id.txt_synopsis);
-        mTxtTitle = (TextView) findViewById(R.id.txt_title);
+        ButterKnife.bind(this);
 
         mMovie = getIntent().getParcelableExtra(MainActivity.EXTRA_MOVIE);
         if(mMovie != null){
