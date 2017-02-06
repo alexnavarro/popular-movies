@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements MovieDBResponse {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getApplicationContext(), MovieDetailActivity.class);
                 intent.putExtra(MainActivity.EXTRA_MOVIE, adapter.getItem(i));
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE_SETTINGS_UPDATE);
             }
         });
 

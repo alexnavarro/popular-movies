@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -41,6 +42,8 @@ import static br.com.alexandrenavarro.popularmovies.app.MainActivity.REQUEST_COD
  */
 
 public class MovieDetailActivity extends AppCompatActivity implements OnResponse{
+
+    private static final String TAG_LOG = MovieDetailActivity.class.getSimpleName();
 
     @BindView(R.id.txt_title) TextView mTxtTitle;
     @BindView(R.id.txt_synopsis) TextView mTxtSynopsis;
@@ -112,42 +115,14 @@ public class MovieDetailActivity extends AppCompatActivity implements OnResponse
     }
 
     public void bind(){
+        String path = MovieDBImageURLBuilder.buildURL(mMovie.getPosterPath());
+        Log.d(TAG_LOG, path);
         Picasso.with(getApplicationContext()).
-                load(MovieDBImageURLBuilder.buildURL(mMovie.getPosterPath()))
+                load(path)
                 .centerCrop().resize((int)PxConverter.convertDpToPixel(120f, getApplicationContext()),
                 (int)PxConverter.convertDpToPixel(170f, getApplicationContext()))
-                .into(new Target() {
-                    @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        assert mImvMovie != null;
-                        mImvMovie.setImageBitmap(bitmap);
-                        Palette.from(bitmap)
-                                .generate(new Palette.PaletteAsyncListener() {
-                                    @Override
-                                    public void onGenerated(Palette palette) {
-                                        Palette.Swatch textSwatch = palette.getDarkMutedSwatch();
+                .into(target);
 
-                                        if(textSwatch != null) {
-                                            mTxtTitle.setBackgroundColor(textSwatch.getRgb());
-                                            mTxtTitle.setTextColor(textSwatch.getBodyTextColor());
-                                        }else {
-                                            mTxtTitle.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_orange_light));
-                                        }
-
-                                    }
-                                });
-                    }
-
-                    @Override
-                    public void onBitmapFailed(Drawable errorDrawable) {
-
-                    }
-
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                    }
-                });
         mTxtTitle.setText(mMovie.getTitle());
         mTxtRate.setText(Double.toString(mMovie.getRating()));
         mTxtSynopsis.setText(mMovie.getSynopsis());
@@ -163,5 +138,47 @@ public class MovieDetailActivity extends AppCompatActivity implements OnResponse
     @Override
     public void onResponseVideo(List<Video> response) {
 
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_CODE_SETTINGS_UPDATE && resultCode == RESULT_OK){
+            setResult(RESULT_OK);
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private class CustomTarget implements Target{
+
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            assert mImvMovie != null;
+            mImvMovie.setImageBitmap(bitmap);
+            Palette.from(bitmap)
+                    .generate(new Palette.PaletteAsyncListener() {
+                        @Override
+                        public void onGenerated(Palette palette) {
+                            Palette.Swatch textSwatch = palette.getDarkMutedSwatch();
+
+                            if(textSwatch != null) {
+                                mTxtTitle.setBackgroundColor(textSwatch.getRgb());
+                                mTxtTitle.setTextColor(textSwatch.getBodyTextColor());
+                            }else {
+                                mTxtTitle.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_orange_light));
+                            }
+
+                        }
+                    });
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable errorDrawable) {
+            Log.d(TAG_LOG, errorDrawable.toString());
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+        }
     }
 }
