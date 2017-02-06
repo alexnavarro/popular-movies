@@ -56,6 +56,7 @@ public class MovieDetailActivity extends AppCompatActivity implements OnResponse
     private Movie mMovie;
     private FetchReviews fetchReviews;
     private FetchVideos fetchVideos;
+    private Target target = new CustomTarget();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
