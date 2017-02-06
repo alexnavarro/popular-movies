@@ -15,5 +15,6 @@
     <string name="label_mark_as_favorite" >Mark as Favorite</string>
     <string name="label_trailers">Trailers</string>
     <string name="label_reviews">Reviews</string>
+    <string name="label_activity_review">Reviews</string>
 
 </resources>

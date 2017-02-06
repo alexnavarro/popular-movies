@@ -19,6 +19,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MovieDetailActivity" />
+        <activity android:name=".ReviewActivity" />
         <activity
             android:name=".SettingsActivity"
             android:theme="@style/SettingsTheme"

@@ -13,13 +13,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -34,6 +34,7 @@ import br.com.alexandrenavarro.popularmovies.app.util.NetworkUtil;
 import br.com.alexandrenavarro.popularmovies.app.util.PxConverter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static br.com.alexandrenavarro.popularmovies.app.MainActivity.REQUEST_CODE_SETTINGS_UPDATE;
 
@@ -51,12 +52,12 @@ public class MovieDetailActivity extends AppCompatActivity implements OnResponse
     @BindView(R.id.txt_rate) TextView mTxtRate;
     @BindView(R.id.imv_movie) ImageView mImvMovie;
     @BindView(R.id.recycler_view_videos) RecyclerView mVideos;
-    @BindView(R.id.list_view_reviews) ListView mReviews;
 
     private Movie mMovie;
     private FetchReviews fetchReviews;
     private FetchVideos fetchVideos;
     private Target target = new CustomTarget();
+    private List<Review> reviews = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,10 +103,8 @@ public class MovieDetailActivity extends AppCompatActivity implements OnResponse
     }
 
     private void fetchReviews() {
-        if(!NetworkUtil.isOnline(getApplicationContext())){
-            Toast.makeText(getApplicationContext(), "Sorry, No internet connection!", Toast.LENGTH_LONG).show();
-            return;
-        }
+
+
     }
 
     private void fetchVideos() {
@@ -129,6 +128,7 @@ public class MovieDetailActivity extends AppCompatActivity implements OnResponse
         mTxtSynopsis.setText(mMovie.getSynopsis());
         if(mMovie.getReleaseDate() != null)
             mTxtReleaseYear.setText(Integer.toString(mMovie.getReleaseDate().get(Calendar.YEAR)));
+
     }
 
     @Override
@@ -181,5 +181,12 @@ public class MovieDetailActivity extends AppCompatActivity implements OnResponse
         public void onPrepareLoad(Drawable placeHolderDrawable) {
 
         }
+    }
+
+    @OnClick(R.id.txt_review)
+    public void reviewTaped(TextView textView) {
+        final Intent intent = new Intent(this, ReviewActivity.class);
+        intent.putExtra(MainActivity.EXTRA_MOVIE, mMovie);
+        startActivity(intent);
     }
 }

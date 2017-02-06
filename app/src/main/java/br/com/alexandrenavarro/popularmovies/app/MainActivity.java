@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import br.com.alexandrenavarro.popularmovies.app.adapter.PopMovieAdapter;
 import br.com.alexandrenavarro.popularmovies.app.async.FetchMovieDBTask;
 import br.com.alexandrenavarro.popularmovies.app.async.MovieDBResponse;
 import br.com.alexandrenavarro.popularmovies.app.model.Movie;

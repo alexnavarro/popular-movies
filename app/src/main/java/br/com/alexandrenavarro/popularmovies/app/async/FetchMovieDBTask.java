@@ -129,6 +129,7 @@ public class FetchMovieDBTask extends AsyncTask<String, Void, Movie[]> {
         final String RATE = "vote_average";
         final String RELEASE_DATE = "release_date";
         final String TITLE = "original_title";
+        final String ID = "id";
 
         JSONObject moviesJson = new JSONObject(movieDbJsonStr);
         JSONArray moviesArray = moviesJson.getJSONArray(RESULTS);
@@ -138,11 +139,13 @@ public class FetchMovieDBTask extends AsyncTask<String, Void, Movie[]> {
         for(int i = 0; i < moviesArray.length(); i++) {
             JSONObject movieObject = moviesArray.getJSONObject(i);
             Movie movie = new Movie();
+            movie.setId(movieObject.getInt(ID));
             movie.setPosterPath(movieObject.getString(POSTER_PATH));
             movie.setSynopsis(movieObject.getString(OVERVIEW));
             movie.setRating(movieObject.getDouble(RATE));
             movie.setTitle(movieObject.getString(TITLE));
             String releaseDate = movieObject.getString(RELEASE_DATE);
+
             if(releaseDate != null){
                 Calendar cal = Calendar.getInstance();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-dd-MM");
