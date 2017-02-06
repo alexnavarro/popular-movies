@@ -12,6 +12,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import br.com.alexandrenavarro.popularmovies.app.model.Movie;
 import br.com.alexandrenavarro.popularmovies.app.util.MovieDBImageURLBuilder;
 
 /**
@@ -30,17 +31,16 @@ public class PopMovieAdapter extends ArrayAdapter<Movie>{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Movie popMovie = getItem(position);
-
         ViewHolder viewHolder;
 
-        if (convertView == null) {
+        if(convertView != null && convertView.getTag() != null && convertView.getTag() instanceof ViewHolder){
+            viewHolder = (ViewHolder) convertView.getTag();
+        }else {
             convertView = LayoutInflater.from(getContext()).inflate(
                     R.layout.pop_movie_item, parent, false);
             viewHolder = new ViewHolder();
             viewHolder.movieView = (ImageView) convertView.findViewById(R.id.imv_movie);
             convertView.setTag(viewHolder);
-        }else {
-            viewHolder = (ViewHolder) convertView.getTag();
         }
 
         Picasso.with(getContext()).

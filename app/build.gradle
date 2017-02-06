@@ -24,10 +24,10 @@ android {
     }
 }
 
-def getMovieKey(String property){
+def getMovieKey(String property) {
     Properties properties = new Properties()
     properties.load(new FileInputStream("services_keys/the_movie_db_key.properties"))
-    return "\"" + properties.getProperty(property) +"\""
+    return "\"" + properties.getProperty(property) + "\""
 }
 
 dependencies {
@@ -39,6 +39,9 @@ dependencies {
     compile 'com.android.support:palette-v7:25.0.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:support-v4:25.0.1'
-    compile 'com.jakewharton:butterknife:8.4.0'
+    compile 'com.android.support:recyclerview-v7:25.0.1'
+    compile 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
     testCompile 'junit:junit:4.12'
 }

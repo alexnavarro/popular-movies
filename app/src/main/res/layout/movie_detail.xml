@@ -4,70 +4,136 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/txt_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:paddingBottom="48dp"
-            android:paddingLeft="28dp"
-            android:paddingTop="48dp"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            tools:background="@android:color/holo_orange_dark"
-            tools:text="Movie Title" />
-
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <RelativeLayout
-            android:id="@+id/container_rate"
-            android:layout_width="wrap_content"
-            android:layout_below="@id/txt_title"
-            android:layout_marginBottom="32dp"
-            android:layout_marginLeft="32dp"
-            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/imv_movie"
-                android:layout_width="120dp"
-                android:layout_height="170dp"
-                tools:src="@android:drawable/ic_delete" />
-
             <TextView
-                android:id="@+id/txt_year"
+                android:id="@+id/txt_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingBottom="48dp"
+                android:paddingLeft="28dp"
+                android:paddingTop="48dp"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                tools:background="@android:color/holo_orange_dark"
+                tools:text="Movie Title" />
+
+
+            <RelativeLayout
+                android:id="@+id/container_rate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/txt_title"
+                android:layout_marginBottom="32dp"
                 android:layout_marginLeft="32dp"
-                android:layout_marginTop="6dp"
-                android:layout_toRightOf="@id/imv_movie"
-                android:textSize="28sp"
-                tools:text="2015" />
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp">
+
+                <ImageView
+                    android:id="@+id/imv_movie"
+                    android:layout_width="120dp"
+                    android:layout_height="170dp"
+                    tools:src="@android:drawable/ic_delete" />
+
+                <TextView
+                    android:id="@+id/txt_year"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_toRightOf="@id/imv_movie"
+                    android:textSize="28sp"
+                    tools:text="2015" />
+
+                <TextView
+                    android:id="@+id/txt_rate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txt_year"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_toRightOf="@id/imv_movie"
+                    android:textSize="18sp"
+                    tools:text="9.8/10" />
+
+                <Button
+                    android:id="@+id/btn_favorite"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txt_rate"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_toRightOf="@id/imv_movie"
+                    android:text="@string/label_mark_as_favorite" />
+
+            </RelativeLayout>
 
             <TextView
-                android:id="@+id/txt_rate"
+                android:id="@+id/txt_synopsis"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/txt_year"
-                android:layout_marginLeft="32dp"
-                android:layout_marginTop="6dp"
-                android:layout_toRightOf="@id/imv_movie"
-                android:textSize="18sp"
-                tools:text="9.8" />
-
+                android:layout_below="@id/container_rate"
+                android:layout_marginLeft="16dp"
+                android:textSize="12sp"
+                tools:text="Reúna um time com os mais perigosos Supervilões já encarcerados, forneça a eles o mais poderoso arsenal à disposição do governo e os envie em uma missão para derrotar uma entidade enigmática insuperável. Amanda Waller, Oficial de Inteligência dos EUA, está convencida de que apenas um grupo de indivíduos díspares, desprezíveis, com quase nada a perder e convocado secretamente vai funcionar." />
         </RelativeLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/shadow_top" />
+
         <TextView
-            android:id="@+id/txt_synopsis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/container_rate"
             android:layout_marginLeft="16dp"
-            android:textSize="12sp"
-            tools:text="Reúna um time com os mais perigosos Supervilões já encarcerados, forneça a eles o mais poderoso arsenal à disposição do governo e os envie em uma missão para derrotar uma entidade enigmática insuperável. Amanda Waller, Oficial de Inteligência dos EUA, está convencida de que apenas um grupo de indivíduos díspares, desprezíveis, com quase nada a perder e convocado secretamente vai funcionar." />
-    </RelativeLayout>
+            android:layout_marginTop="8dp"
+            android:text="@string/label_trailers"
+            android:textSize="16sp" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view_videos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/shadow_botton" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/label_reviews"
+            android:textSize="16sp" />
+
+        <ListView
+            android:id="@+id/list_view_reviews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
 
 </ScrollView>

@@ -1,4 +1,4 @@
-package br.com.alexandrenavarro.popularmovies.app;
+package br.com.alexandrenavarro.popularmovies.app.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -16,6 +16,7 @@ public class Movie implements Parcelable {
     private double rating;
     private Calendar releaseDate;
     private String title;
+    private int id;
 
     public String getPosterPath() {
         return posterPath;
@@ -57,6 +58,14 @@ public class Movie implements Parcelable {
         return title;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -69,6 +78,7 @@ public class Movie implements Parcelable {
         dest.writeDouble(this.rating);
         dest.writeSerializable(this.releaseDate);
         dest.writeString(this.title);
+        dest.writeInt(this.id);
     }
 
     public Movie() {
@@ -80,6 +90,7 @@ public class Movie implements Parcelable {
         this.rating = in.readDouble();
         this.releaseDate = (Calendar) in.readSerializable();
         this.title = in.readString();
+        this.id = in.readInt();
     }
 
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {

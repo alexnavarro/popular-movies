@@ -1,4 +1,4 @@
-package br.com.alexandrenavarro.popularmovies.app;
+package br.com.alexandrenavarro.popularmovies.app.async;
 
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -17,6 +17,9 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import br.com.alexandrenavarro.popularmovies.app.BuildConfig;
+import br.com.alexandrenavarro.popularmovies.app.model.Movie;
 
 /**
  * Created by alexandrenavarro on 23/01/17.
@@ -57,6 +60,7 @@ public class FetchMovieDBTask extends AsyncTask<String, Void, Movie[]> {
                     .appendQueryParameter(API_KEY_PARAM, BuildConfig.OPEN_THE_MOVIE_DB_API_KEY)
                     .appendQueryParameter(LANGUAGE, params[1]).build();
 
+            Log.d("URL", builtUri.toString());
             URL url = new URL(builtUri.toString());
 
             // Create the request to OpenWeatherMap, and open the connection
@@ -86,7 +90,7 @@ public class FetchMovieDBTask extends AsyncTask<String, Void, Movie[]> {
             }
             moviesJsonStr = buffer.toString();
             Log.d(LOG_TAG, "Movie Db JSON String: " + moviesJsonStr);
-            return getWeatherDataFromJson(moviesJsonStr);
+            return getMoviesFromJson(moviesJsonStr);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attempting
@@ -115,7 +119,7 @@ public class FetchMovieDBTask extends AsyncTask<String, Void, Movie[]> {
         callback.onResult(movies);
     }
 
-    private Movie[] getWeatherDataFromJson(String movieDbJsonStr)
+    private Movie[] getMoviesFromJson(String movieDbJsonStr)
             throws JSONException {
 
         // These are the names of the JSON objects that need to be extracted.

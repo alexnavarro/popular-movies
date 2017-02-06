@@ -18,15 +18,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import br.com.alexandrenavarro.popularmovies.app.async.FetchMovieDBTask;
+import br.com.alexandrenavarro.popularmovies.app.async.MovieDBResponse;
+import br.com.alexandrenavarro.popularmovies.app.model.Movie;
 import br.com.alexandrenavarro.popularmovies.app.util.NetworkUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements MovieDBResponse{
+public class MainActivity extends AppCompatActivity implements MovieDBResponse {
 
     public static final int REQUEST_CODE_SETTINGS_UPDATE = 666;
     public static final String EXTRA_MOVIES = "EXTRA_MOVIES";
     public static final String EXTRA_MOVIE = "EXTRA_MOVIE";
+    public static final String PAGE = "1";
 
     @BindView(R.id.movies_grid) GridView mGridView;
     @BindView(R.id.progressBar) ProgressBar progressBar;
@@ -99,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements MovieDBResponse{
                 getString(R.string.pref_order_popular));
 
         task = new FetchMovieDBTask(this);
-        task.execute(order, Locale.getDefault().toString() , "1");
+        task.execute(order, Locale.getDefault().toString() , PAGE);
     }
 
     @Override
