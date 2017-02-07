@@ -213,9 +213,9 @@ public class MovieDetailActivity extends AppCompatActivity implements OnResponse
     @Override
     public void onClick(View v) {
        Video video = ((VideoView) v).getVideo();
-        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + video.getId()));
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + video.getKey()));
         Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("http://www.youtube.com/watch?v=" + video.getId()));
+                Uri.parse("http://www.youtube.com/watch?v=" + video.getKey()));
         try {
             startActivity(appIntent);
         } catch (ActivityNotFoundException ex) {
