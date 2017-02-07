@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import br.com.alexandrenavarro.popularmovies.app.R;
 import br.com.alexandrenavarro.popularmovies.app.model.Review;
 
 /**
@@ -32,9 +33,9 @@ public class ReviewAdapter extends ArrayAdapter<Review> {
             viewHolder = (ReviewAdapter.ViewHolder) convertView.getTag();
         }else {
             convertView = LayoutInflater.from(getContext()).inflate(
-                    android.R.layout.simple_list_item_1, parent, false);
+                    R.layout.review_list_item, parent, false);
             viewHolder = new ReviewAdapter.ViewHolder();
-            viewHolder.comment = (TextView) convertView.findViewById(android.R.id.text1);
+            viewHolder.comment = (TextView) convertView.findViewById(R.id.txt_item_review);
             convertView.setTag(viewHolder);
         }
 

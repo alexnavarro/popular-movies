@@ -1,23 +1,22 @@
 package br.com.alexandrenavarro.popularmovies.app;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.graphics.Palette;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,20 +28,23 @@ import br.com.alexandrenavarro.popularmovies.app.async.OnResponse;
 import br.com.alexandrenavarro.popularmovies.app.model.Movie;
 import br.com.alexandrenavarro.popularmovies.app.model.Review;
 import br.com.alexandrenavarro.popularmovies.app.model.Video;
+import br.com.alexandrenavarro.popularmovies.app.util.ImageTargetLoading;
 import br.com.alexandrenavarro.popularmovies.app.util.MovieDBImageURLBuilder;
 import br.com.alexandrenavarro.popularmovies.app.util.NetworkUtil;
 import br.com.alexandrenavarro.popularmovies.app.util.PxConverter;
+import br.com.alexandrenavarro.popularmovies.app.view.VideoView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static br.com.alexandrenavarro.popularmovies.app.MainActivity.PAGE;
 import static br.com.alexandrenavarro.popularmovies.app.MainActivity.REQUEST_CODE_SETTINGS_UPDATE;
 
 /**
  * Created by alexandrenavarro on 18/12/16.
  */
 
-public class MovieDetailActivity extends AppCompatActivity implements OnResponse{
+public class MovieDetailActivity extends AppCompatActivity implements OnResponse, View.OnClickListener{
 
     private static final String TAG_LOG = MovieDetailActivity.class.getSimpleName();
 
@@ -50,29 +52,43 @@ public class MovieDetailActivity extends AppCompatActivity implements OnResponse
     @BindView(R.id.txt_synopsis) TextView mTxtSynopsis;
     @BindView(R.id.txt_year) TextView mTxtReleaseYear;
     @BindView(R.id.txt_rate) TextView mTxtRate;
+    @BindView(R.id.txt_review) TextView mTxtReview;
+    @BindView(R.id.txt_more) TextView mTxtMore;
     @BindView(R.id.imv_movie) ImageView mImvMovie;
-    @BindView(R.id.recycler_view_videos) RecyclerView mVideos;
+    @BindView(R.id.container_trailers) LinearLayout mContainerTrailers;
 
     private Movie mMovie;
     private FetchReviews fetchReviews;
     private FetchVideos fetchVideos;
-    private Target target = new CustomTarget();
     private List<Review> reviews = new ArrayList<>();
+    private List<Video> videos = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.movie_detail);
         ButterKnife.bind(this);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         mMovie = getIntent().getParcelableExtra(MainActivity.EXTRA_MOVIE);
         if(mMovie != null){
             bind();
+        }
+
+        if(savedInstanceState == null){
             fetchReviews = new FetchReviews(this, mMovie.getId());
             fetchVideos = new FetchVideos(this, mMovie.getId());
         }
+    }
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(fetchReviews != null && !fetchReviews.isCancelled())
+            fetchReviews.cancel(true);
+        if(fetchVideos != null && !fetchVideos.isCancelled())
+            fetchVideos.cancel(true);
     }
 
     @Override
@@ -98,12 +114,24 @@ public class MovieDetailActivity extends AppCompatActivity implements OnResponse
     @Override
     public void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        fetchVideos();
-        fetchReviews();
+
+        if(savedInstanceState == null) {
+            fetchVideos();
+            fetchReviews();
+        }
     }
 
     private void fetchReviews() {
+        if(!NetworkUtil.isOnline(getApplicationContext())){
+            Toast.makeText(getApplicationContext(), "Sorry, No internet connection!", Toast.LENGTH_LONG).show();
+            return;
+        }
 
+        if(fetchReviews == null){
+            fetchReviews = new FetchReviews(this, mMovie.getId());
+        }
+
+        fetchReviews.execute("en_US" , PAGE);
 
     }
 
@@ -112,6 +140,11 @@ public class MovieDetailActivity extends AppCompatActivity implements OnResponse
             Toast.makeText(getApplicationContext(), "Sorry, No internet connection!", Toast.LENGTH_LONG).show();
             return;
         }
+
+        if(fetchVideos == null)
+            fetchVideos = new FetchVideos(this, mMovie.getId());
+
+        fetchVideos.execute("en_US");
     }
 
     public void bind(){
@@ -121,7 +154,7 @@ public class MovieDetailActivity extends AppCompatActivity implements OnResponse
                 load(path)
                 .centerCrop().resize((int)PxConverter.convertDpToPixel(120f, getApplicationContext()),
                 (int)PxConverter.convertDpToPixel(170f, getApplicationContext()))
-                .into(target);
+                .into(new ImageTargetLoading(getApplicationContext(), mImvMovie, mTxtTitle));
 
         mTxtTitle.setText(mMovie.getTitle());
         mTxtRate.setText(Double.toString(mMovie.getRating()));
@@ -133,12 +166,31 @@ public class MovieDetailActivity extends AppCompatActivity implements OnResponse
 
     @Override
     public void onResponseReview(List<Review> response) {
-
+        reviews = response;
+        if(reviews != null && reviews.size() > 0){
+            String content = response.get(0).getContent();
+            content = content.length() > 300 ? content.substring(0, 300) : content;
+            mTxtReview.setText(content);
+            mTxtMore.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void onResponseVideo(List<Video> response) {
+        videos = response;
+        if(videos != null && videos.size() > 0) {
+            for( int i = 0; i < videos.size() ; i ++ ) {
+                VideoView videoView = new VideoView(getApplicationContext(), videos.get(i));
+                videoView.setClickable(true);
+                videoView.setOnClickListener(this);
 
+                if(i == videos.size() -1){
+                    videoView.hidBottomSeparator();
+                }
+
+                mContainerTrailers.addView(videoView);
+            }
+        }
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -149,44 +201,25 @@ public class MovieDetailActivity extends AppCompatActivity implements OnResponse
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private class CustomTarget implements Target{
 
-        @Override
-        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-            assert mImvMovie != null;
-            mImvMovie.setImageBitmap(bitmap);
-            Palette.from(bitmap)
-                    .generate(new Palette.PaletteAsyncListener() {
-                        @Override
-                        public void onGenerated(Palette palette) {
-                            Palette.Swatch textSwatch = palette.getDarkMutedSwatch();
-
-                            if(textSwatch != null) {
-                                mTxtTitle.setBackgroundColor(textSwatch.getRgb());
-                                mTxtTitle.setTextColor(textSwatch.getBodyTextColor());
-                            }else {
-                                mTxtTitle.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_orange_light));
-                            }
-
-                        }
-                    });
-        }
-
-        @Override
-        public void onBitmapFailed(Drawable errorDrawable) {
-            Log.d(TAG_LOG, errorDrawable.toString());
-        }
-
-        @Override
-        public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-        }
+    @OnClick(R.id.txt_more)
+    public void moreTaped(TextView textView) {
+        final Intent intent = new Intent(this, ReviewActivity.class);
+        intent.putParcelableArrayListExtra(ReviewActivity.EXTRA_REVIEWS, (ArrayList<? extends Parcelable>) reviews);
+        startActivity(intent);
     }
 
-    @OnClick(R.id.txt_review)
-    public void reviewTaped(TextView textView) {
-        final Intent intent = new Intent(this, ReviewActivity.class);
-        intent.putExtra(MainActivity.EXTRA_MOVIE, mMovie);
-        startActivity(intent);
+
+    @Override
+    public void onClick(View v) {
+       Video video = ((VideoView) v).getVideo();
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + video.getId()));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + video.getId()));
+        try {
+            startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            startActivity(webIntent);
+        }
     }
 }

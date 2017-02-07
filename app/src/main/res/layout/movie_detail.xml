@@ -100,15 +100,16 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
             android:text="@string/label_trailers"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view_videos"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/container_trailers"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp" />
+            android:layout_margin="16dp"
+            android:orientation="vertical">
+
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
@@ -116,7 +117,15 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/shadow_botton" />
+            android:background="@drawable/shadow_bottom" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/label_reviews"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/txt_review"
@@ -124,8 +133,25 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
-            android:text="@string/label_reviews"
-            android:textSize="16sp" />
+            android:maxLength="300"
+            android:textSize="16sp"
+            tools:text="Review review review refere re" />
+
+        <TextView
+            android:id="@+id/txt_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="8dp"
+            android:maxLength="300"
+            android:padding="8dp"
+            android:text="@string/label_more"
+            android:textColor="@color/blue_azure"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
 
     </LinearLayout>
 
