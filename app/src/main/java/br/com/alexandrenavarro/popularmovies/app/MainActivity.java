@@ -1,7 +1,11 @@
 package br.com.alexandrenavarro.popularmovies.app;
 
+import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -21,14 +25,17 @@ import java.util.Locale;
 import br.com.alexandrenavarro.popularmovies.app.adapter.PopMovieAdapter;
 import br.com.alexandrenavarro.popularmovies.app.async.FetchMovieDBTask;
 import br.com.alexandrenavarro.popularmovies.app.async.MovieDBResponse;
+import br.com.alexandrenavarro.popularmovies.app.data.MovieProvider;
 import br.com.alexandrenavarro.popularmovies.app.model.Movie;
+import br.com.alexandrenavarro.popularmovies.app.util.MovieCursorUtil;
 import br.com.alexandrenavarro.popularmovies.app.util.NetworkUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements MovieDBResponse {
+public class MainActivity extends AppCompatActivity implements MovieDBResponse, LoaderManager.LoaderCallbacks<Cursor>{
 
     public static final int REQUEST_CODE_SETTINGS_UPDATE = 666;
+    private static final int CURSOR_LOADER_ID = 0;
     public static final String EXTRA_MOVIES = "EXTRA_MOVIES";
     public static final String EXTRA_MOVIE = "EXTRA_MOVIE";
     public static final String PAGE = "1";
@@ -89,19 +96,29 @@ public class MainActivity extends AppCompatActivity implements MovieDBResponse {
     }
 
     private void fetchMovies() {
-        if(!NetworkUtil.isOnline(getApplicationContext())){
-            Toast.makeText(getApplicationContext(), "Sorry, No internet connection!", Toast.LENGTH_LONG).show();
-            return;
-        }
-
         progressBar.setVisibility(View.VISIBLE);
-
         SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(this);
-
         String order = sharedPrefs.getString(
                 getString(R.string.pref_sort_movies_key),
                 getString(R.string.pref_order_popular));
+
+        if("favorites".equals(order)){
+            android.content.Loader<Object> loader = getLoaderManager().getLoader(CURSOR_LOADER_ID);
+            if(loader == null){
+                getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
+            }else{
+                getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
+            }
+            return;
+        }
+
+        if(!NetworkUtil.isOnline(getApplicationContext())){
+            Toast.makeText(getApplicationContext(), "Sorry, No internet connection!", Toast.LENGTH_LONG).show();
+            progressBar.setVisibility(View.GONE);
+            return;
+        }
+
 
         task = new FetchMovieDBTask(this);
         task.execute(order, Locale.getDefault().toString() , PAGE);
@@ -134,10 +151,38 @@ public class MainActivity extends AppCompatActivity implements MovieDBResponse {
     public void onResult(Movie[] movies) {
         progressBar.setVisibility(View.GONE);
         if(adapter != null && movies!= null && movies.length > 0) {
-            adapter.clear();
-            adapter.addAll(movies);
-            MainActivity.this.movies.clear();
-            MainActivity.this.movies.addAll(Arrays.asList(movies));
+            updateListView(Arrays.asList(movies));
         }
+    }
+
+    private void updateListView(List<Movie> movies) {
+        adapter.clear();
+        adapter.addAll(movies);
+        MainActivity.this.movies.clear();
+        MainActivity.this.movies.addAll(movies);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(this, MovieProvider.Movies.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        progressBar.setVisibility(View.GONE);
+        List<Movie> movies = MovieCursorUtil.toList(data);
+        if(movies != null) {
+            updateListView(movies);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        adapter.clear();
+        movies.clear();
     }
 }

@@ -6,9 +6,11 @@
     <string name="pref_movies_label">The sort order</string>
     <string name="pref_top_rated_movies_label">Top rated movies</string>
     <string name="pref_popular_movies_label">Popular Movies</string>
+    <string name="pref_favorites_movies_label">Favorites Movies</string>
 
     <string name="pref_order_top_rated" translatable="false">top_rated</string>
     <string name="pref_order_popular" translatable="false">popular</string>
+    <string name="pref_order_favorites" translatable="false">favorites</string>
 
     <string name="pref_sort_movies_key" translatable="false">sort</string>
 

@@ -29,6 +29,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="br.com.alexandrenavarro.popularmovies.app.MainActivity" />
         </activity>
+        <provider
+            android:authorities="br.com.alexandrenavarro.popularmovies.app.data.MovieProvider"
+            android:name="br.com.alexandrenavarro.popularmovies.app.data.generated.MovieProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>
